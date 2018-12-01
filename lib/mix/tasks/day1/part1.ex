@@ -30,7 +30,7 @@ defmodule Mix.Tasks.Day1.Part1 do
   """
 
   @shortdoc "Day1 part1"
-  def run(args) do
+  def run(_args) do
     Application.ensure_started(:adventofcode2018)
 
     File.read!("priv/day1_input.txt")
