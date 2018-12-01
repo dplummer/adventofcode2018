@@ -2,17 +2,15 @@ defmodule CircularList do
   defstruct [:data, :pos, :len]
   def new(list) do
     %__MODULE__{
-      data: :array.from_list(list),
+      data: build(list),
       pos: 0,
       len: length(list)
     }
   end
 
   def next(cl) do
-    case :array.get(cl.pos, cl.data) do
-      :undefined -> {nil, cl}
-      item -> {item, increment(cl)}
-    end
+    item = Map.get(cl.data, cl.pos)
+    {item, increment(cl)}
   end
 
   def increment(%{pos: pos, len: len} = cl) do
@@ -22,5 +20,11 @@ defmodule CircularList do
     end
 
     %{cl | pos: next_pos}
+  end
+
+  defp build(list) do
+    list
+    |> Enum.with_index
+    |> Enum.into(%{}, fn {value, index} -> {index, value} end)
   end
 end
