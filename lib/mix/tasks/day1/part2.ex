@@ -42,18 +42,18 @@ defmodule Mix.Tasks.Day1.Part2 do
         end)
         |> CircularList.new
 
-      find_duplicate(data, [], 0)
+      find_duplicate(data, MapSet.new, 0, 0)
     end)
   end
 
-  def find_duplicate(data, seen, current_freq) do
+  def find_duplicate(data, seen, current_freq, iterations) do
     {value, data} = CircularList.next(data)
     new_freq = current_freq + value
 
-    if new_freq in seen do
-      new_freq
+    if MapSet.member?(seen, new_freq) do
+      {new_freq, iterations}
     else
-      find_duplicate(data, [new_freq | seen], new_freq)
+      find_duplicate(data, MapSet.put(seen, new_freq), new_freq, iterations + 1)
     end
   end
 end

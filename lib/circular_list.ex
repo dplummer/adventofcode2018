@@ -2,15 +2,17 @@ defmodule CircularList do
   defstruct [:data, :pos, :len]
   def new(list) do
     %__MODULE__{
-      data: list,
+      data: :array.from_list(list),
       pos: 0,
       len: length(list)
     }
   end
 
   def next(cl) do
-    item = Enum.at(cl.data, cl.pos)
-    {item, increment(cl)}
+    case :array.get(cl.pos, cl.data) do
+      :undefined -> {nil, cl}
+      item -> {item, increment(cl)}
+    end
   end
 
   def increment(%{pos: pos, len: len} = cl) do
