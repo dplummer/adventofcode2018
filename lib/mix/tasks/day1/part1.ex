@@ -33,12 +33,13 @@ defmodule Mix.Tasks.Day1.Part1 do
   def run(_args) do
     Application.ensure_started(:adventofcode2018)
 
-    File.read!("priv/day1_input.txt")
-    |> String.split("\n")
-    |> Enum.reduce(0, fn
-      "+" <> value, acc -> acc + String.to_integer(value)
-      "-" <> value, acc -> acc - String.to_integer(value)
+    Result.run(fn ->
+      File.read!("priv/day1_input.txt")
+      |> String.split("\n")
+      |> Enum.reduce(0, fn
+        "+" <> value, acc -> acc + String.to_integer(value)
+        "-" <> value, acc -> acc - String.to_integer(value)
+      end)
     end)
-    |> IO.inspect(label: "answer")
   end
 end

@@ -30,25 +30,30 @@ defmodule Mix.Tasks.Day1.Part2 do
 
   @shortdoc "Day1 part1"
   def run(_args) do
-    input =
-      File.read!("priv/day1_input.txt")
-      |> String.split("\n")
-      |> Enum.map(fn
-        "+" <> value -> String.to_integer(value)
-        value -> String.to_integer(value)
-      end)
+    Application.ensure_started(:adventofcode2018)
 
-    find_duplicate(input, [], 0)
-    |> IO.inspect(label: "answer")
+    Result.run(fn ->
+      data =
+        File.read!("priv/day1_input.txt")
+        |> String.split("\n")
+        |> Enum.map(fn
+          "+" <> value -> String.to_integer(value)
+          value -> String.to_integer(value)
+        end)
+        |> CircularList.new
+
+      find_duplicate(data, [], 0)
+    end)
   end
 
-  def find_duplicate([value | rest], seen, current_freq) do
+  def find_duplicate(data, seen, current_freq) do
+    {value, data} = CircularList.next(data)
     new_freq = current_freq + value
 
     if new_freq in seen do
       new_freq
     else
-      find_duplicate(rest ++ [value], [new_freq | seen], new_freq)
+      find_duplicate(data, [new_freq | seen], new_freq)
     end
   end
 end
