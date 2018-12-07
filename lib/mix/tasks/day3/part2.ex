@@ -24,7 +24,7 @@ defmodule Mix.Tasks.Day3.Part2 do
   def find_non_overlapping_claim(raw) do
     raw
     |> String.split("\n")
-    |> Enum.reduce(Grid.new, &overlay_claims/2)
+    |> Enum.reduce(Grid.new(), &overlay_claims/2)
     |> find_non_overlapping()
   end
 
@@ -34,15 +34,20 @@ defmodule Mix.Tasks.Day3.Part2 do
   end
 
   def parse_line(line) do
-    result = Regex.named_captures(~r/\A#(?<id>\d+) @ (?<x>\d+),(?<y>\d+): (?<width>\d+)x(?<height>\d+)\z/, line)
+    result =
+      Regex.named_captures(
+        ~r/\A#(?<id>\d+) @ (?<x>\d+),(?<y>\d+): (?<width>\d+)x(?<height>\d+)\z/,
+        line
+      )
+
     [result["id"], result["x"], result["y"], result["width"], result["height"]]
     |> Enum.map(&String.to_integer/1)
-    |> List.to_tuple
+    |> List.to_tuple()
   end
 
   def find_non_overlapping(claims) do
     claims
-    |> Enum.reduce({MapSet.new, MapSet.new}, fn {_, row}, acc ->
+    |> Enum.reduce({MapSet.new(), MapSet.new()}, fn {_, row}, acc ->
       Enum.reduce(row, acc, fn
         {_, [id]}, {candidates, rejection} ->
           case id in rejection do
@@ -57,7 +62,7 @@ defmodule Mix.Tasks.Day3.Part2 do
       end)
     end)
     |> elem(0)
-    |> MapSet.to_list
+    |> MapSet.to_list()
     |> hd
   end
 end

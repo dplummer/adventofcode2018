@@ -52,17 +52,21 @@ defmodule Mix.Tasks.Day2.Part1 do
   end
 
   def checksum(lines) do
-    {two, three} = lines
-    |> String.split("\n")
-    |> Enum.map(&line_count/1)
-    |> Enum.reduce({0,0}, fn {two, three}, {acc2, acc3} -> {two + acc2, three + acc3} end)
+    {two, three} =
+      lines
+      |> String.split("\n")
+      |> Enum.map(&line_count/1)
+      |> Enum.reduce({0, 0}, fn {two, three}, {acc2, acc3} -> {two + acc2, three + acc3} end)
+
     two * three
   end
 
   def line_count(line) do
-    groups = line
-    |> String.graphemes
-    |> Enum.group_by(& &1)
+    groups =
+      line
+      |> String.graphemes()
+      |> Enum.group_by(& &1)
+
     two = if char_count(groups, 2) > 0, do: 1, else: 0
     three = if char_count(groups, 3) > 0, do: 1, else: 0
     {two, three}

@@ -68,7 +68,7 @@ defmodule Mix.Tasks.Day3.Part1 do
   def count_overlapping_claims(raw) do
     raw
     |> String.split("\n")
-    |> Enum.reduce(Grid.new, &overlay_claims/2)
+    |> Enum.reduce(Grid.new(), &overlay_claims/2)
     |> count_duplicates()
   end
 
@@ -78,10 +78,15 @@ defmodule Mix.Tasks.Day3.Part1 do
   end
 
   def parse_line(line) do
-    result = Regex.named_captures(~r/\A#(?<id>\d+) @ (?<x>\d+),(?<y>\d+): (?<width>\d+)x(?<height>\d+)\z/, line)
+    result =
+      Regex.named_captures(
+        ~r/\A#(?<id>\d+) @ (?<x>\d+),(?<y>\d+): (?<width>\d+)x(?<height>\d+)\z/,
+        line
+      )
+
     [result["id"], result["x"], result["y"], result["width"], result["height"]]
     |> Enum.map(&String.to_integer/1)
-    |> List.to_tuple
+    |> List.to_tuple()
   end
 
   def count_duplicates(claims) do

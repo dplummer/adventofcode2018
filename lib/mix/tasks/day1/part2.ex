@@ -40,9 +40,9 @@ defmodule Mix.Tasks.Day1.Part2 do
           "+" <> value -> String.to_integer(value)
           value -> String.to_integer(value)
         end)
-        |> CircularList.new
+        |> CircularList.new()
 
-      find_duplicate(data, MapSet.new, 0, 0)
+      find_duplicate(data, MapSet.new(), 0, 0)
     end)
   end
 

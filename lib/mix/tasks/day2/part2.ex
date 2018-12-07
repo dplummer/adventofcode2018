@@ -28,9 +28,10 @@ defmodule Mix.Tasks.Day2.Part2 do
     Application.ensure_started(:adventofcode2018)
 
     Result.run(fn ->
-      lines = File.read!("priv/day2_input.txt")
-      |> String.split("\n")
-      |> Enum.map(&String.graphemes/1)
+      lines =
+        File.read!("priv/day2_input.txt")
+        |> String.split("\n")
+        |> Enum.map(&String.graphemes/1)
 
       find_lines(lines, lines)
     end)
@@ -40,14 +41,16 @@ defmodule Mix.Tasks.Day2.Part2 do
     line1
     |> compare(lines)
     |> case do
-      nil -> find_lines(rest, lines)
+      nil ->
+        find_lines(rest, lines)
+
       line2 ->
         Enum.zip([line1, line2])
         |> Enum.filter(fn
-          {a,a} -> true
+          {a, a} -> true
           _ -> false
         end)
-        |> Enum.map(&elem(&1,0))
+        |> Enum.map(&elem(&1, 0))
         |> Enum.join("")
     end
   end
@@ -55,11 +58,12 @@ defmodule Mix.Tasks.Day2.Part2 do
   def compare(line1, lines) do
     lines
     |> Enum.find(fn line2 ->
-      length(line1) - 1 == Enum.zip([line1, line2])
-      |> Enum.count(fn
-        {a,a} -> true
-        _ -> false
-      end)
+      length(line1) - 1 ==
+        Enum.zip([line1, line2])
+        |> Enum.count(fn
+          {a, a} -> true
+          _ -> false
+        end)
     end)
   end
 end
