@@ -2,8 +2,7 @@ defmodule Mix.Tasks.Day7.Part1 do
   use Mix.Task
 
   defmodule Step do
-    defstruct [:name, :children]
-    def new(name, child), do: %__MODULE__{name: name, children: [child]}
+    defstruct [name: nil, children: [], prereq: []]
   end
 
   @moduledoc """
@@ -24,12 +23,41 @@ defmodule Mix.Tasks.Day7.Part1 do
       # Step F must be finished before step E can begin.
       # """
       # |> String.split("\n")
-      # |> Enum.filter(& &1 != "")
+      |> Enum.filter(& &1 != "")
       |> part1()
     end)
   end
 
   def part1(stream) do
+    stream
+    |> Enum.map(&parse/1)
+    |> Enum.reduce([], fn {name, child}, acc ->
+      acc
+      |> Keyword.update(name, %Step{name: name, children: [child]}, fn existing_step ->
+        %{existing_step | children: Enum.sort([child | existing_step.children])}
+      end)
+      |> Keyword.update(child, %Step{name: child, prereq: [name]}, fn existing_step ->
+        %{existing_step | prereq: [name | existing_step.prereq]}
+      end)
+    end)
+    |> Enum.map(fn {_, step} -> step end)
+    |> Enum.sort_by(& &1.name)
+    |> step_sort([], [])
+    |> print()
+  end
+
+  def step_sort([], [], acc), do: Enum.reverse(acc)
+  def step_sort([%Step{prereq: []} = step | steps], hold, acc), do: step_sort(hold ++ steps, [], [step | acc])
+  def step_sort([step | steps], hold, acc) do
+    step_names = Enum.map(acc, & &1.name)
+    if Enum.all?(step.prereq, fn req_name -> req_name in step_names end) do
+      step_sort(hold ++ steps, [], [step | acc])
+    else
+      step_sort(steps, hold ++ [step], acc)
+    end
+  end
+
+  def part1x(stream) do
     stream
     |> Enum.map(&parse/1)
     |> Enum.map(fn {name, child} -> Step.new(name, child) end)
@@ -65,6 +93,7 @@ defmodule Mix.Tasks.Day7.Part1 do
 
   def print(acc) do
     acc
+    |> Enum.map(& &1.name)
     |> Enum.map(&Atom.to_string/1)
     |> Enum.join("")
   end
